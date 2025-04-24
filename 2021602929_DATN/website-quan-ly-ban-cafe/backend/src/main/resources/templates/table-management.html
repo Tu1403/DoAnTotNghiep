@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Danh sách bàn</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <link rel="shortcut icon" href="/img/favicon.ico" type="image/x-icon"/>
+    <style>
+        .sidebar {
+            height: 100vh;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 200px;
+            background-color: rgb(198, 198, 198);
+            padding-top: 20px;
+        }
+
+        .sidebar .nav {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .sidebar .nav a {
+            margin: 10px 0;
+            background-color: gray;
+            border-radius: 15px;
+            text-align: center;
+            color: white;
+            padding: 10px 0;
+            display: block;
+        }
+
+        .nav a:hover {
+            color: blue;
+        }
+
+        .bill-list {
+            background-color: rgb(244, 243, 243);
+            margin-left: 220px;
+            padding: 20px;
+        }
+
+        /* Custom styling for table */
+        .table th, .table td {
+            text-align: center;
+        }
+
+        .status-label {
+            /* Default styles if needed */
+        }
+
+        .status-radio {
+            margin-right: 5px;
+        }
+
+        .btn-custom {
+            padding: 2px 5px;
+        }
+
+        /* Base styles */
+        .status-label {
+            /* Default styles if needed */
+        }
+
+        /* Checked state styling */
+        input[type="radio"]:checked + label.available {
+            color: green;
+        }
+
+        input[type="radio"]:checked + label.not-available {
+            color: red;
+        }
+
+        input[type="radio"] {
+            width: 20px;
+            height: 20px;
+        }
+
+        .table-bordered {
+            background-color: white;
+        }
+    </style>
+</head>
+
+<body>
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-2 sidebar">
+            <nav class="nav flex-column">
+                <a th:if="${user.getRole_id()==4 || user.getRole_id()==5}" href="/management">Trang chủ</a>
+                <a th:if="${user.getRole_id()==2 || user.getRole_id()==5}" href="/products">Kho</a>
+                <a th:if="${user.getRole_id()==2 || user.getRole_id()==5}" href="/categories">Danh mục</a>
+                <a th:if="${user.getRole_id()==3 || user.getRole_id()==5}" href="/management/table" style="background-color: black; color: white">Danh sách bàn</a>
+                <a th:if="${user.getRole_id()==4 || user.getRole_id()==5}" href="/management/allbill">Tất cả Bill</a>
+                <a th:if="${user.getRole_id()==5}" href="/respon">Phản hồi khách hàng</a>
+<!--                <a th:if="${user.getRole_id()==5}" href="/management/jobboard">Bảng công việc</a>-->
+                <a th:if="${user.getRole_id()==5}" href="/admin/users/statistic">Thống kê</a>
+                <a th:if="${user.getRole_id()==5}" href="/admin/users">Cài đặt</a>
+            </nav>
+        </div>
+        <div class="col-md-10 offset-md-1 bill-list">
+
+            <div class="row">
+                <div class="col-6">
+                    <h1 class="my-4">Danh sách bàn</h1>
+                </div>
+                <div class="col-md-6">
+                    <div class="row" style="border-bottom: 1px solid rgb(184, 184, 184); display: flex;margin-top: 5%">
+                        <div class="col-4" style="color: #0e4bf1; text-transform: uppercase">
+                            <h5 class="username" style="padding: 0 20px;font-weight: bold;"
+                                th:text="${user.getUsername()}"></h5>
+                        </div>
+                        <div class="col-4">
+                            <button type="button" class="" style="border: none;">
+                                <a href="/staffProfile" style="padding: 0 20px">
+                                    <i class="fas fa-user"></i> Cá nhân
+                                </a>
+                            </button>
+                        </div>
+                        <div class="col-4">
+                            <button type="button" class="" style="border: none;">
+                                <a href="/logout" style="padding: 0 20px">
+                                    <i class="fas fa-sign-out-alt"></i> Đăng xuất
+                                </a>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div th:if="${success}" class="alert alert-success alert-dismissible fade show" role="alert">
+                <strong th:text="${success}"></strong>
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+
+            <!-- Display error message -->
+            <div th:if="${error}" class="alert alert-danger alert-dismissible fade show" role="alert">
+                <strong th:text="${error}"></strong>
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="row">
+                <div class="col-12">
+                    <table class="table  table-bordered">
+                        <thead>
+                        <tr>
+                            <th scope="col">Số bàn</th>
+                            <th scope="col">Số ghế</th>
+                            <th scope="col">Trạng thái</th>
+                            <th scope="col">Hoạt động</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr th:each="table : ${tables}">
+                            <td th:text="${table.getTid()}"></td>
+                            <td th:text="${table.getNumberOfChair()}"></td>
+                            <td>
+                                <span th:text="${table.status == 1 ? 'Không còn chỗ' : 'Còn chỗ'}"
+                                      th:classappend="${table.status == 1 ? 'text-danger' : 'text-success'}"></span>
+                            </td>
+                            <td>
+                                <form action="#" th:action="@{/management/updateTableStatus}" method="post">
+                                    <input type="hidden" name="tid" th:value="${table.getTid()}"/>
+
+                                    <!-- Radio button for "Not Available" -->
+                                    <input type="radio" id="notAvailable" name="status" value="0"
+                                           th:checked="${table.status == 0}" class="status-radio"/>
+                                    <label for="notAvailable" class="status-label available">Còn chỗ</label>
+
+                                    <!-- Radio button for "Available" -->
+                                    <input type="radio" id="available" name="status" value="1"
+                                           th:checked="${table.status == 1}" class="status-radio"/>
+                                    <label for="available" class="status-label not-available">Không còn chỗ</label>
+
+                                    <button type="submit" class="btn btn-primary">Kiểm tra</button>
+                                </form>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Optional JavaScript -->
+<!-- jQuery first, then Popper.js, then Bootstrap JS -->
+<script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.6.0/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+</body>
+</html>

@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hóa đơn</title>
+    <!-- Bootstrap CSS -->
+    <link rel="shortcut icon" href="/img/favicon.ico" type="image/x-icon"/>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+    <style>
+        .sidebar {
+            height: 100vh;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 200px;
+            background-color: rgb(198, 198, 198);
+            padding-top: 20px;
+        }
+
+        .sidebar .nav {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .sidebar .nav a {
+            margin: 10px 0;
+            background-color: gray;
+            border-radius: 15px;
+            text-align: center;
+            color: white;
+            padding: 10px 0;
+            display: block;
+        }
+
+        .nav a:hover {
+            color: blue;
+        }
+
+        .bill-list {
+            background-color: rgb(244, 243, 243);
+            margin-left: 220px;
+            padding: 20px;
+        }
+
+
+        /* Checked state styling */
+        input[type="radio"]:checked + label.paid {
+            color: green;
+        }
+
+        input[type="radio"]:checked + label.not-paid {
+            color: red;
+        }
+
+        input[type="radio"] {
+            width: 20px;
+            height: 20px;
+        }
+
+        .table-bordered {
+            background-color: white;
+        }
+
+        .table th, .table td {
+            text-align: center;
+        }
+
+        .pagination-container {
+            display: flex;
+            justify-content: center;
+            margin-top: 20px;
+        }
+
+        .content-cell{
+            max-width: 200px; /* Giới hạn chiều rộng tối đa */
+            white-space: normal; /* Cho phép xuống dòng */
+            word-wrap: break-word; /* Tự động xuống dòng khi nội dung vượt quá */
+        }
+    </style>
+</head>
+
+<body>
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-2 sidebar">
+            <nav class="nav flex-column">
+                <a th:if="${user.getRole_id()==4 || user.getRole_id()==5}" href="/management">Trang chủ</a>
+                <a th:if="${user.getRole_id()==2 || user.getRole_id()==5}" href="/products">Kho</a>
+                <a th:if="${user.getRole_id()==2 || user.getRole_id()==5}" href="/categories">Danh mục</a>
+                <a th:if="${user.getRole_id()==3 || user.getRole_id()==5}" href="/management/table">Danh sách bàn</a>
+                <a th:if="${user.getRole_id()==4 || user.getRole_id()==5}" href="/management/allbill">Tất cả Bill</a>
+                <a th:if="${user.getRole_id()==5}" href="/respon" style="background-color: black; color: white">Phản hồi khách hàng</a>
+                <!--                <a th:if="${user.getRole_id()==5}" href="/management/jobboard">Bảng công việc</a>-->
+                <a th:if="${user.getRole_id()==5}" href="/admin/users/statistic">Thống kê</a>
+                <a th:if="${user.getRole_id()==5}" href="/admin/users">Cài đặt</a>
+            </nav>
+        </div>
+        <div class="col-md-10 offset-md-1 bill-list">
+            <div class="row">
+                <div class="col-6">
+                    <h1 class="my-4">Quản lý phản hồi</h1>
+                    <div class="col-4 my-4">
+                        <form action="/respon" method="get" class="d-flex">
+                            <input class="mr-2" type="date" name="createdTime" value="${createdTime}" placeholder="Chọn ngày" style="width: 250px"/>
+                            <input type="submit" class="btn btn-primary" value="Tìm kiếm"/>
+                        </form>
+                        <form class="d-flex" method="get" action="/respon/searchDate">
+                            <input type="text" class="form-control mt-2 mr-2" name="userId"
+                                   placeholder="Tìm kiếm bằng mã người dùng" th:value="${userId}" style="width: 250px">
+                            <input type="submit" class="btn btn-primary mt-2" value="Tìm kiếm"/>
+                        </form>
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="row" style="border-bottom: 1px solid rgb(184, 184, 184); display: flex;margin-top: 5%">
+                        <div class="col-4" style="color: #0e4bf1; text-transform: uppercase">
+                            <h5 class="username" style="padding: 0 20px;font-weight: bold;"
+                                th:text="${user.getUsername()}"></h5>
+                        </div>
+                        <div class="col-4">
+                            <button type="button" class="" style="border: none">
+                                <a href="/staffProfile" style="padding: 0 20px">
+                                    <i class="fas fa-user"></i> Cá nhân
+                                </a>
+                            </button>
+                        </div>
+                        <div class="col-4">
+                            <button type="button" class="" style="border: none">
+                                <a href="/logout" style="padding: 0 20px">
+                                    <i class="fas fa-sign-out-alt"></i> Đăng xuất
+                                </a>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div th:if="${success}" class="alert alert-success alert-dismissible fade show" role="alert">
+                <strong th:text="${success}"></strong>
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+
+            <!-- Display error message -->
+            <div th:if="${error}" class="alert alert-danger alert-dismissible fade show" role="alert">
+                <strong th:text="${error}"></strong>
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div id="success-message" th:if="${message}" class="alert alert-success" role="alert">
+                <span th:text="${message}"></span>
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div id="danger-message" th:if="${errormessage}" class="alert alert-danger" role="alert">
+                <span th:text="${errormessage}"></span>
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="row">
+                <div class="col-12">
+                    <div th:if="${respons.isEmpty()}">
+                        <p class="text-center">Không có phản hồi nào được tạo vào ngày này.</p>
+                    </div>
+
+                    <div th:unless="${respons.isEmpty()}">
+                        <table class="table table-striped">
+                            <thead class="">
+                                <tr>
+<!--                                    <th scope="col">ID</th>-->
+                                    <th scope="col">Mã User</th>
+                                    <th scope="col">Tên người dùng</th>
+                                    <th scope="col">Ngày phản hồi</th>
+                                    <th scope="col">Tiêu đề</th>
+                                    <th scope="col">Nội dung</th>
+                                    <th scope="col">Trạng thái</th>
+                                    <th scope="col">Hành động</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr th:each="responData : ${respons}">
+<!--                                    <td th:text="${responData.complain.cid}"></td>-->
+                                    <td>
+                                        <button type="button" class="btn btn-link" data-toggle="modal"
+                                                data-target="#feedbackModal" th:attr="data-user-id=${responData.complain.userId}"
+                                                th:text="${responData.complain.userId}"></button>
+                                    </td>
+                                    <td th:text="${responData.username}"></td>
+                                    <td th:text="${#dates.format(responData.complain.createdTime, 'yyyy-MM-dd')}"></td>
+                                    <td th:text="${responData.complain.title}" class="content-cell"></td>
+                                    <td th:text="${responData.complain.complainUser}" class="content-cell"></td>
+                                    <td>
+                                        <span th:text="${responData.complain.status == 1 ? 'Đã phản hồi' : 'Chưa phản hồi'}"
+                                              th:classappend="${responData.complain.status == 1 ? 'text-success' : 'text-danger'}">
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <button type="button" class="btn btn-primary btn-complain" data-toggle="modal"
+                                                data-target="#feedbackModal"
+                                                th:attr="data-cid=${responData.complain.cid},
+                                                         data-userId=${responData.complain.userId},
+                                                         data-username=${responData.username},
+                                                         data-createdTime=${responData.complain.createdTime},
+                                                         data-title=${responData.complain.title},
+                                                         data-complain=${responData.complain.complainUser},
+                                                         data-status=${responData.complain.status},
+                                                         data-respon=${responData.complain.respon}">
+                                            Phản hồi
+                                        </button>
+                                        <a class="btn btn-danger" style="width: 84.5px;" th:href="@{/respon/delete/{id}(id=${responData.complain.cid})}" onclick="return confirm('Bạn có chắc chắn muốn xóa phản hồi này?');">
+                                            Xóa</a>
+                                    </td>
+                                </tr>
+
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div class="col-12">
+                    <div class="pagination-container" th:unless="${respons.isEmpty()}">
+                        <nav aria-label="Page navigation">
+                            <ul class="pagination justify-content-center">
+                                <li class="page-item" th:classappend="${currentPage == 0} ? 'disabled'">
+                                    <a class="page-link"
+                                       th:href="@{/respon(page=${currentPage - 1}, size=${size}, createdTime=${createdTime})}"
+                                       aria-label="Previous">
+                                        <span aria-hidden="true">&laquo;</span>
+                                    </a>
+                                </li>
+                                <li class="page-item" th:each="page : ${#numbers.sequence(0, totalPages - 1)}"
+                                    th:classappend="${page == currentPage} ? 'active'">
+                                    <a class="page-link"
+                                       th:href="@{/respon(page=${page}, size=${size}, createdTime=${createdTime})}"
+                                       th:text="${page + 1}"></a>
+                                </li>
+                                <li class="page-item" th:classappend="${currentPage == totalPages - 1} ? 'disabled'">
+                                    <a class="page-link"
+                                       th:href="@{/respon(page=${currentPage + 1}, size=${size}, createdTime=${createdTime})}"
+                                       aria-label="Next">
+                                        <span aria-hidden="true">&raquo;</span>
+                                    </a>
+                                </li>
+                            </ul>
+                        </nav>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id = "complainModal" tabindex="-1" aria-labelledby="complainModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="complainModalLabel">Phản hồi khách hàng</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="complainModalForm" th:action="@{/respon/sendRespon}" method="post" enctype="multipart/form-data">
+                    <input type="hidden" id="cid" name="cid"/>
+                    <input type="hidden" id="status" name="status"/>
+                    <input type="hidden" id="userId" name="userId"/>
+
+                    <div class="form-group">
+                        <label for="complain">Nội dung phàn nàn:</label>
+                        <textarea class="form-control" id="complain" name="complain" rows="3" readonly></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="respon">Phản hồi:</label>
+                        <textarea class="form-control" id="respon" name="respon" rows="3"></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-success">Phản hồi</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.6.0/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+<script>
+    $(document).ready(function () {
+
+        $('.btn-complain').click(function (){
+            var cid = $(this).data('cid');
+            var userId = $(this).data('userId')
+            var username = $(this).data('username');
+            var createdTime = $(this).data('createdTime');
+            var title = $(this).data('title');
+            var complain = $(this).data('complain');
+            var status = $(this).data('status');
+            var respon = $(this).data('respon');
+
+            $('#cid').val(cid);
+            $('#userId').val(userId);
+            $('#status').val(status);
+            $('#title').val(title);
+            $('#createdTime').val(createdTime);
+            $('#complain').val(complain);
+            $('#respon').val(respon);
+
+            $('#complainModal').modal('show');
+        });
+
+        $('#complainModal').submit(function (event){
+            var respon = $('#respon').val().trim();
+            var isValid = true;
+
+            if(respon === "" || respon === null){
+                alert("Phản hồi khách hàng đi thì nhấn 'Phản hồi'");
+            }
+
+            if (!isValid) {
+                event.preventDefault();
+            }
+        });
+    });
+</script>
+
+</body>
+</html>

@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Giỏ hàng</title>
+
+    <link rel="stylesheet" href="/css/shopping-cart.css">
+    <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,300,400italic,600,700' rel='stylesheet'
+          type='text/css'>
+    <link href='https://fonts.googleapis.com/css?family=Damion' rel='stylesheet' type='text/css'>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" rel="stylesheet">
+    <link href="/css/templatemo-style.css" rel="stylesheet">
+<!--    <link rel="stylesheet" type="text/css" href="/css/home.css">-->
+    <link rel="shortcut icon" href="img/favicon.ico" type="image/x-icon"/>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+    <link href="https://fonts.googleapis.com/css?family=Montserrat" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Manrope:wght@200&display=swap');
+    </style>
+</head>
+
+
+<body>
+
+<div class="tm-top-header">
+    <div class="container">
+        <div class="row align-items-center tm-top-header-inner">
+            <div class="col-md-4 tm-logo-container d-flex align-items-center">
+                <img src="/img/logo.png" alt="Logo" class="tm-site-logo mr-3">
+                <h1 class="tm-site-name tm-handwriting-font m-0">Coffee Shop</h1>
+            </div>
+            <div class="col-md-8 d-flex justify-content-end align-items-center">
+                <div class="mobile-menu-icon d-md-none">
+                    <i class="fa fa-bars"></i>
+                </div>
+                <nav class="tm-nav d-none d-md-flex">
+                    <ul class="nav">
+                        <li class="nav-item">
+                            <a class="nav-link" th:classappend="${currentPage == 'home'} ? 'active'" href="/homepage">Trang chủ</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" th:classappend="${currentPage == 'menu'} ? 'active'" href="/menu">Menu</a>
+                        </li>
+                        <li class="nav-item">
+                            <a th:classappend="${currentPage == 'complain'} ? 'active'" href="/complain">Liên hệ</a>
+                        </li>
+                        <li class="nav-item" th:if="${#authorization.expression('isAnonymous()')}">
+                            <a class="nav-link" href="/register">Đăng ký</a>
+                        </li>
+                        <li class="nav-item" th:if="${#authorization.expression('isAnonymous()')}">
+                            <a class="nav-link" href="/login">Đăng nhập</a>
+                        </li>
+                        <li class="nav-item position-relative" th:if="${user != null}">
+                            <a th:classappend="${currentPage == 'cart'} ? 'active'"
+                               class="nav-link position-relative text-decoration-none" href="/cart">
+                                <i class="fa fa-cart-arrow-down text-dark"></i>
+                                <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-light text-dark"
+                                      th:text="${cartItems.size()}">
+                        </span>
+                            </a>
+                        </li>
+<!--                        <li class="nav-item" th:if="${user != null}">-->
+<!--                            <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" id="profileDropdown"-->
+<!--                               role="button" data-bs-toggle="dropdown" aria-expanded="false">-->
+<!--                                <i class="bi bi-person-circle me-2"></i>-->
+<!--                                <span style="color: yellow" th:text="${user.getUsername()}"></span>-->
+<!--                            </a>-->
+<!--                        </li>-->
+                        <li th:classappend="${currentPage == 'profile'} ? 'active'" th:if="${user != null}">
+                            <a href="/profile">
+                                <i class="bi bi-person-circle"></i>
+                                <span style="color: yellow" th:text="${user.getUsername()}"></span>
+                            </a>
+                        </li>
+                        <li th:if="${user != null}"><a href="/logout"><i class="bi bi-box-arrow-right"></i></a></li>
+                    </ul>
+                </nav>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<main class="page">
+    <section class="shopping-cart dark">
+        <div class="container">
+            <div class="block-heading">
+                <h2 style="font-weight: 600; color: black">GIỎ HÀNG</h2>
+            </div>
+            <div class="content">
+                <div class="row">
+                    <div class="col-md-12 col-lg-8">
+                        <div class="items">
+                            <div th:each="cartItemWithProduct : ${cartItems}">
+                                <div class="product p-3">
+                                    <div class="row">
+                                        <div class="col-md-3">
+<!--                                            <img class="img-fluid mx-auto d-block image"-->
+<!--                                                 th:src="@{${cartItemWithProduct.product.image}}" alt="Product Image" style="border-radius: 9px">-->
+                                            <img class="img-fluid mx-auto d-block image" th:src="@{'data:image/jpeg;base64,' + ${cartItemWithProduct.product.image}}" alt="Product Image" style="border-radius: 9px"/>
+                                        </div>
+                                        <div class="col-md-8">
+                                            <div class="info">
+                                                <div class="row">
+                                                    <div class="col-md-5 product-name">
+                                                        <div class="product-name">
+                                                            <h5 class="" th:text="${cartItemWithProduct.product.pname}" style="color: black"></h5>
+                                                        </div>
+                                                    </div>
+
+                                                    <form th:action="@{/cart/updateQuantity}" method="post"
+                                                          onsubmit="return validateQuantity(this.querySelector('.quantity-input'));">
+                                                        <input type="hidden" name="productId"
+                                                               th:value="${cartItemWithProduct.product.pid}">
+                                                        <input type="hidden" name="cartItemId"
+                                                               th:value="${cartItemWithProduct.cartItem.itemId}">
+                                                        <div style="display: flex">
+                                                            <div class="col-md-4 quantity">
+                                                                <label for="quantity">Số lượng:</label>
+                                                                <input id="quantity" type="number" name="quantity"
+                                                                       th:value="${cartItemWithProduct.cartItem.quantity}"
+                                                                       th:attr="data-max-quantity=${cartItemWithProduct.product.quantity}"
+                                                                       class="form-control quantity-input quantity">
+                                                            </div>
+                                                        </div>
+                                                    </form>
+
+
+                                                    <div class="col-md-3 price">
+                                                        <span th:text="${cartItemWithProduct.product.getPrice() * cartItemWithProduct.cartItem.quantity} + ' VND'"></span>
+                                                    </div>
+
+                                                    <form th:action="@{/cart/delete}" method="post">
+                                                        <input type="hidden" name="cartItemId"
+                                                               th:value="${cartItemWithProduct.cartItem.itemId}">
+                                                        <button type="submit" class="btn btn-danger">
+                                                            <i class="bi bi-trash"></i>
+                                                        </button>
+                                                    </form>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <hr/>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                    <div class="col-md-12 col-lg-4">
+                        <div class="summary">
+                            <h3>TỔNG</h3>
+<!--                            <div class="summary-item"><span class="text">Giảm giá</span><span class="price">0%</span></div>-->
+                            <div class="summary-item"><span class="text">Phí vận chuyển</span><span
+                                    class="price">Free Ship</span></div>
+                            <div class="summary-item"><span class="text">Tổng cộng:</span><span class="price" th:text="${totalPrice}+' VND'"></span>
+                            </div>
+                            <button class="btn btn-warning btn-block btn-lg ml-2 pay-button" type="button">
+                                <a href="/cart/checkout" style="color: white">Thanh toán</a>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</main>
+
+<footer>
+    <div class="tm-black-bg">
+        <div class="container">
+            <div class="row">
+                <nav class="col-lg-3 col-md-3 tm-footer-nav tm-footer-div">
+                    <h3 class="tm-footer-div-title">MENU CHÍNH</h3>
+                    <ul>
+                        <li><a href="/homepage">Trang chủ</a></li>
+                        <li><a href="/menu">Menu</a></li>
+                        <li><a href="/comlain">Liên hệ</a></li>
+                    </ul>
+                </nav>
+                <div class="col-lg-5 col-md-5 tm-footer-div">
+                    <h3 class="tm-footer-div-title">CHÚNG TÔI</h3>
+                    <p class="margin-top-15">The Coffee Shop sẽ là nơi mọi người xích lại gần nhau, đề cao giá trị kết
+                        nối con người và sẻ chia thân tình bên những tách cà phê, ly trà đượm hương, truyền cảm hứng về
+                        lối sống hiện đại.</p>
+                </div>
+                <div class="col-lg-4 col-md-4 tm-footer-div">
+                    <h3 class="tm-footer-div-title">BẠN CẦN</h3>
+                    <p><i class="bi bi-telephone"></i> Đặt hàng: 1800 6936</p>
+                    <p><i class="bi bi-envelope"></i> Liên hệ</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div>
+        <div class="container">
+            <div class="row tm-copyright">
+                <p class="col-lg-12 small copyright-text text-center">Bản quyền &copy; 2024 Coffee Shop</p>
+            </div>
+        </div>
+    </div>
+</footer> <!-- Footer content-->
+
+<script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+<script>
+    function validateQuantity(inputElement) {
+        const quantity = parseInt(inputElement.value);
+        const maxQuantity = parseInt(inputElement.getAttribute('data-max-quantity'));
+
+        if (quantity <= 0) {
+            alert('Vui lòng nhập số lượng > 0!');
+            inputElement.value = 1; // Reset the value to 1
+            return false;
+        } else if (quantity > maxQuantity) {
+            alert('Số lượng vượt quá sản phẩm có trong kho, vui lòng nhập lại!');
+            inputElement.value = 1; // Reset the value to max quantity
+            return false;
+        }
+        return true;
+    }
+</script>
+
+</body>
+
+</html>

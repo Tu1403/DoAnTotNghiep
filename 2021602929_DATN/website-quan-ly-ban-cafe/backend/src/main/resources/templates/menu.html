@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Menu</title>
+    <link href='http://fonts.googleapis.com/css?family=Open+Sans:400,300,400italic,600,700' rel='stylesheet'
+          type='text/css'>
+    <link href='http://fonts.googleapis.com/css?family=Damion' rel='stylesheet' type='text/css'>
+    <link href="/css/bootstrap.min.css" rel="stylesheet">
+    <link href="/css/font-awesome.min.css" rel="stylesheet">
+    <link href="/css/templatemo-style.css" rel="stylesheet">
+    <link rel="shortcut icon" href="/img/favicon.ico" type="image/x-icon"/>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <style>
+        body{
+            font-family: sans-serif;
+        }
+
+        .tm-product-title a{
+            text-decoration: none;
+            font-weight: 550;
+            color: black;
+        }
+
+        .tm-product-title a:hover {
+            color: #E57905;
+        }
+
+        .tm-product {
+            /*display: flex;*/
+            align-items: center;
+            margin-bottom: 30px;
+        }
+
+        .tm-product img {
+            max-width: 200px;
+            max-height: 200px;
+            object-fit: cover;
+            margin-right: 20px;
+            border-radius: 25px;
+        }
+
+        .tm-product-text {
+            flex: 1;
+            margin-right: 20%;
+        }
+
+        .tm-product-price {
+            white-space: nowrap;
+        }
+
+        .pagination a, .pagination span {
+            padding: 10px;
+            margin: 5px;
+            /*border: 1px solid #ddd;*/
+            text-decoration: none;
+            color: #333;
+            display: inline-block;
+        }
+
+        .pagination a.active {
+            background-color: #E57905;
+            color: white;
+        }
+
+        .pagination a:hover {
+            background-color: #e9aa0b;
+        }
+
+        .search-form {
+            margin-bottom: 20px;
+        }
+
+        .search-form input {
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            margin-right: 5px;
+            width: 80%;
+            max-width: 250px;
+        }
+
+        .search-form button {
+            padding: 10px 15px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            background-color: #333;
+            color: white;
+            cursor: pointer;
+        }
+
+        .search-form button:hover {
+            background-color: #555;
+        }
+        .no-products-message {
+            font-size: 18px;
+            color: #666;
+            text-align: center;
+            margin: 20px 0;
+        }
+
+        .no-products-message i {
+            font-size: 24px;
+            color: #333;
+            margin-right: 10px;
+        }
+
+        /* Bóng nhẹ cho ảnh */
+        .product-image {
+            width: 100%;
+            height: 272px;
+            object-fit: cover;
+            border-radius: 8px; /* Bo góc ảnh */
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Tạo bóng */
+            transition: box-shadow 0.3s, transform 0.3s; /* Hiệu ứng hover */
+        }
+
+        /* Hiệu ứng khi hover vào ảnh */
+        .product-image:hover {
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+            transform: scale(1.05); /* Phóng to nhẹ */
+        }
+
+        /* Bố cục form */
+        .page-size-form {
+            display: flex;
+            align-items: center;
+            justify-content: flex-start;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        /* Nhãn form */
+        .form-label {
+            font-size: 16px;
+            color: #6b4f4f;
+            font-weight: 600;
+        }
+
+        /* Tùy chỉnh select */
+        .custom-select {
+            padding: 8px 12px;
+            font-size: 10px;
+            border-radius: 8px;
+            border: 1px solid #ddd;
+            background-color: #fff;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            transition: border-color 0.3s, box-shadow 0.3s;
+        }
+
+        /* Hiệu ứng hover và focus */
+        .custom-select:hover {
+            border-color: #ff8c00;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+        }
+
+        .custom-select:focus {
+            outline: none;
+            border-color: #e07b00;
+            box-shadow: 0 4px 8px rgba(255, 140, 0, 0.3);
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .page-size-form {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .custom-select {
+                width: 100%;
+            }
+        }
+
+    </style>
+</head>
+<body>
+
+<div class="tm-top-header">
+    <div class="container">
+        <div class="row">
+            <div class="tm-top-header-inner">
+                <div class="tm-logo-container">
+                    <img src="img/logo.png" alt="Logo" class="tm-site-logo">
+                    <h1 class="tm-site-name tm-handwriting-font">Coffee Shop</h1>
+                </div>
+                <div class="mobile-menu-icon">
+                    <i class="fa fa-bars"></i>
+                </div>
+                <nav class="tm-nav">
+                    <ul>
+                        <li><a th:classappend="${currentPage1 == 'home'} ? 'active':''" href="/homepage">Trang chủ</a></li>
+                        <li><a th:classappend="${currentPage1 == 'menu'} ? 'active':''" href="/menu">Menu</a></li>
+                        <li><a th:classappend="${currentPage == 'complain'} ? 'active'" href="/complain">Liên hệ</a></li>
+                        <li th:if="${#authorization.expression('isAnonymous()')}"><a href="/register">Đăng kí</a></li>
+                        <li th:if="${#authorization.expression('isAnonymous()')}"><a href="/login">Đăng nhập</a></li>
+                        <li th:if="${user != null}">
+                            <a class="nav-icon position-relative text-decoration-none" href="/cart">
+                                <i class="fa fa-fw fa-cart-arrow-down text-dark mr-1"></i>
+                                <span class="position-absolute top-0 left-100 translate-middle badge rounded-pill bg-light text-dark"
+                                      th:text="${cartItems.size()}"></span>
+                            </a>
+                        </li>
+
+                        <li th:classappend="${currentPage == 'profile'} ? 'active'" th:if="${user != null}">
+                            <!--                            <span th:if="${user != null}"><a style="color: yellow"></a></span>-->
+                            <a href="/profile">
+                                <i class="bi bi-person-circle"></i>
+                                <span style="color: yellow" th:text="${user.getUsername()}"></span>
+                            </a>
+                        </li>
+                        <li th:if="${user != null}"><a href="/logout"><i class="bi bi-box-arrow-right"></i></a></li>
+                    </ul>
+                </nav>
+            </div>
+        </div>
+    </div>
+</div>
+<section class="tm-welcome-section">
+    <div class="container tm-position-relative">
+
+        <div class="row tm-welcome-content">
+            <h2 class="white-text tm-handwriting-font tm-welcome-header"><img src="/img/header-line.png" alt="Line"
+                                                                              class="tm-header-line">&nbsp;Our Menus&nbsp;&nbsp;<img
+                    src="/img/header-line.png" alt="Line" class="tm-header-line"></h2>
+            <h2 class="gold-text tm-welcome-header-2">Coffee Shop</h2>
+        </div>
+        <img src="/img/table-set.png" alt="Table Set" class="tm-table-set img-responsive">
+    </div>
+</section>
+<div class="tm-main-section light-white-bg">
+    <div class="container" id="main">
+        <section class="tm-section row">
+            <div class="col-lg-9 col-md-9 col-sm-8">
+                <h2 class="tm-section-header gold-text tm-handwriting-font" >Thực đơn đa dạng</h2>
+                <h2>Coffee Shop</h2>
+                <p class="tm-welcome-description" style="font-size: 15px">
+                    Chào mừng bạn đến với Coffee Shop, nơi truyền thống gặp gỡ sự đổi mới. Thưởng thức thực đơn đa dạng
+                    của
+                    chúng tôi bao gồm mọi thứ từ cà phê đậm đặc của Việt Nam đến các loại trà trái cây tươi mát. Cho dù
+                    bạn đến
+                    đây để đón khách nhanh hay để trò chuyện nhàn nhã, bầu không khí chào đón và đội ngũ tận tâm của
+                    chúng tôi
+                    đều có mặt để đảm bảo trải nghiệm đặc biệt. Hãy đến với chúng tôi và thưởng thức những hương vị
+                    tuyệt vời
+                    nhất được chế tác bằng niềm đam mê và độ chính xác. </p>
+
+            </div>
+            <div class="col-lg-3 col-md-3 col-sm-4 tm-welcome-img-container">
+                <div class="inline-block shadow-img">
+                    <img src="/img/1.jpg" alt="Image" class="img-circle img-thumbnail">
+                </div>
+            </div>
+        </section>
+        <section class="tm-section row">
+            <div class="col-lg-12 tm-section-header-container margin-bottom-30">
+                <h2 class="tm-section-header gold-text tm-handwriting-font"><img src="/img/logo.png" alt="Logo"
+                                                                                 class="tm-site-logo">Menu của chúng tôi</h2>
+                <div class="tm-hr-container">
+                    <hr class="tm-hr">
+                </div>
+            </div>
+
+            <div class="col-lg-12">
+                <form class="search-form" method="get" action="/menu">
+                    <input type="text" name="search" placeholder="Nhập tên sản phẩm" th:value="${searchQuery}">
+                    <input type="hidden" name="categoryId" th:value="${selectedCategoryId}">
+                    <button type="submit"><i class="fa fa-search" style="font-size:16px"></i></button>
+                </form>
+                <form class="page-size-form" method="get" action="/menu">
+                    <div class="form-group">
+                        <label for="pageSize" class="form-label">Số sản phẩm muốn hiển thị:</label>
+                        <select name="pageSize" id="pageSize" class="custom-select" onchange="this.form.submit()">
+                            <option value="2" th:text="'2'" th:selected="${pageSize == 2}">2</option>
+                            <option value="4" th:text="'4'" th:selected="${pageSize == 4}">4</option>
+                            <option value="5" th:text="'5'" th:selected="${pageSize == 5}">5</option>
+                            <option value="8" th:text="'8'" th:selected="${pageSize == 8}">8</option>
+                        </select>
+                    </div>
+
+                    <input type="hidden" name="search" th:value="${searchQuery}">
+                    <input type="hidden" name="categoryId" th:value="${selectedCategoryId}">
+                </form>
+
+                <div class="row">
+                    <div class="col-lg-3 col-md-3">
+                        <div class="tm-position-relative margin-bottom-30">
+                            <nav class="tm-side-menu">
+                                <ul>
+                                    <li><a th:href="@{/menu}"
+                                           th:classappend="${selectedCategoryId == null ? 'active' : ''}">All</a></li>
+                                    <li th:each="category : ${categories}">
+                                        <a th:href="@{/menu(categoryId=${category.cid})}"
+                                           th:text="${category.categoryName}"
+                                           th:classappend="${category.cid == selectedCategoryId ? 'active' : ''}">Category
+                                            Name</a>
+                                    </li>
+                                </ul>
+                            </nav>
+                            <img src="/img/vertical-menu-bg.png" alt="Menu bg" class="tm-side-menu-bg">
+                        </div>
+                    </div>
+
+                    <div class="col-lg-9 col-md-9">
+                        <div class="tm-menu-product-content">
+                            <!-- Display the message if no products are found -->
+                            <div th:if="${#lists.isEmpty(products)}" class="no-products-message">
+                                <i class="fas fa-coffee"></i> Không tìm thấy sẩn phẩm
+                            </div>
+                            <div class="tm-product" th:each="product : ${products}">
+                                <img th:src="'data:image/jpeg;base64,' + ${product.image}" alt="Product Image"/>
+                                <div class="tm-product-text">
+                                    <h3 class="tm-product-title">
+                                        <a th:href="@{/product/{pid}(pid = ${product.pid})}" th:text="${product.pname}"></a>
+                                    </h3>
+                                    <h4 style="color: darkgray" th:text="${product.getPrice()}+' VND'"></h4>
+
+                                    <div th:if="${user != null}">
+                                        <form th:action="@{/cart/add}" method="post">
+                                            <input type="hidden" name="productId" th:value="${product.pid}"/>
+                                            <input type="hidden" name="quantity" value="1"/>
+                                            <input type="hidden" name="customerId" th:value="${user.getUid()}"/>
+                                            <button type="submit" class="btn btn-secondary" style="background-color: #E57905; color: white">Thêm vào giỏ hàng</button>
+                                        </form>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+                        <div th:if="${not #lists.isEmpty(products)}">
+                            <div class="pagination">
+                                <a th:if="${currentPage > 0}" th:href="@{/menu(page=${currentPage - 1}, pageSize=${pageSize}, categoryId=${selectedCategoryId}, search=${searchQuery})}">&laquo; Previous</a>
+                                <span th:each="i : ${#numbers.sequence(0, totalPages - 1)}">
+                                    <a th:href="@{/menu(page=${i}, pageSize=${pageSize}, categoryId=${selectedCategoryId}, search=${searchQuery})}"
+                                        th:text="${i + 1}" th:classappend="${i == currentPage ? 'active' : ''}">1</a>
+                                </span>
+                                <a th:if="${currentPage < totalPages - 1}" th:href="@{/menu(page=${currentPage + 1}, pageSize=${pageSize}, categoryId=${selectedCategoryId}, search=${searchQuery})}">Next &raquo;</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+</div>
+<footer>
+    <div class="tm-black-bg">
+        <div class="container">
+            <div class="row margin-bottom-60">
+                <nav class="col-lg-3 col-md-3 tm-footer-nav tm-footer-div">
+                    <h3 class="tm-footer-div-title">MENU CHÍNH</h3>
+                    <ul>
+                        <li><a href="/homepage">Trang chủ</a></li>
+                        <li><a href="/menu">Menu</a></li>
+                        <li><a href="/complain">Liên hệ</a></li>
+                    </ul>
+                </nav>
+                <div class="col-lg-5 col-md-5 tm-footer-div">
+                    <h3 class="tm-footer-div-title">CHÚNG TÔI</h3>
+                    <p class="margin-top-15">The Coffee Shop sẽ là nơi mọi người xích lại gần nhau, đề cao giá trị kết
+                        nối con người và sẻ chia thân tình bên những tách cà phê, ly trà đượm hương, truyền cảm hứng về
+                        lối sống hiện đại.</p>
+                </div>
+                <div class="col-lg-4 col-md-4 tm-footer-div">
+                    <h3 class="tm-footer-div-title">BẠN CẦN</h3>
+                    <p><i class="bi bi-telephone"></i> Đặt hàng: 1800 6936</p>
+                    <p><i class="bi bi-envelope"></i> Liên hệ</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div>
+        <div class="container">
+            <div class="row tm-copyright">
+                <p class="col-lg-12 small copyright-text text-center">Bản quyền &copy; 2024 Coffee Shop</p>
+            </div>
+        </div>
+    </div>
+</footer> <!-- Footer content-->
+<!-- JS -->
+<script type="text/javascript" src="js/jquery-1.11.2.min.js"></script>      <!-- jQuery -->
+<script type="text/javascript" src="js/templatemo-script.js"></script>      <!-- Templatemo Script -->
+
+</body>
+</html>

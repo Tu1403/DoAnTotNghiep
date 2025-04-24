@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Coffee Shop</title>
+
+    <link href='http://fonts.googleapis.com/css?family=Open+Sans:400,300,400italic,600,700' rel='stylesheet'
+          type='text/css'>
+    <link href='http://fonts.googleapis.com/css?family=Damion' rel='stylesheet' type='text/css'>
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+    <link href="css/font-awesome.min.css" rel="stylesheet">
+    <link href="css/templatemo-style.css" rel="stylesheet">
+    <link rel="shortcut icon" href="img/favicon.ico" type="image/x-icon"/>
+    <link rel="stylesheet" type="text/css" href="/css/home.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+
+</head>
+
+
+<body>
+<div class="tm-top-header">
+    <div class="container">
+        <div class="row">
+            <div class="tm-top-header-inner">
+                <div class="tm-logo-container">
+                    <img src="/img/logo.png" alt="Logo" class="tm-site-logo">
+                    <h1 class="tm-site-name tm-handwriting-font">Coffee Shop</h1>
+                </div>
+                <div class="mobile-menu-icon">
+                    <i class="fa fa-bars"></i>
+                </div>
+                <nav class="tm-nav">
+                    <ul>
+                        <li><a th:classappend="${currentPage == 'home'} ? 'active'" href="/homepage">Trang chủ</a></li>
+                        <li><a th:classappend="${currentPage == 'menu'} ? 'active'" href="/menu">Menu</a></li>
+                        <li><a th:classappend="${currentPage == 'complain'} ? 'active'" href="/complain">Liên hệ</a></li>
+                        <li th:if="${#authorization.expression('isAnonymous()')}"><a href="/register">Đăng kí</a></li>
+                        <li th:if="${#authorization.expression('isAnonymous()')}"><a href="/login">Đăng nhập</a></li>
+                        <li th:if="${user != null}">
+                            <a class="nav-icon position-relative text-decoration-none" href="/cart">
+                                <i class="fa fa-fw fa-cart-arrow-down text-dark mr-1"></i>
+                                <span class="position-absolute top-0 left-100 translate-middle badge rounded-pill bg-light text-dark" th:text="${cartItems.size()}"></span>
+                            </a>
+                        </li>
+                        <li th:classappend="${currentPage == 'profile'} ? 'active'" th:if="${user != null}">
+                            <a href="/profile">
+                                <i class="bi bi-person-circle"></i>
+                                <span style="color: yellow" th:text="${user.getUsername()}"></span>
+                            </a>
+                        </li>
+                        <li th:if="${user != null}"><a href="/logout"><i class="bi bi-box-arrow-right"></i></a></li>
+                    </ul>
+                </nav>
+            </div>
+        </div>
+    </div>
+</div>
+<section class="tm-welcome-section">
+    <div class="container tm-position-relative">
+        <div class="row tm-welcome-content">
+            <h2 class="white-text tm-handwriting-font tm-welcome-header">
+                <img src="img/header-line.png" alt="Line" class="tm-header-line">&nbsp;Welcome To&nbsp;&nbsp;
+                <img src="img/header-line.png" alt="Line" class="tm-header-line"></h2>
+            <h2 class="gold-text tm-welcome-header-2">Coffee Shop</h2>
+        </div>
+        <img src="img/table-set.png" alt="Table Set" class="tm-table-set img-responsive">
+    </div>
+</section>
+<div class="tm-main-section">
+    <div class="container" id="main">
+        <section class="tm-section row">
+            <div class="col-lg-9 col-md-9 col-sm-8">
+                <h2 class="tm-section-header gold-text tm-handwriting-font">Cà phê tốt nhất cho bạn</h2>
+                <h2>Coffee Shop</h2>
+                <p class="tm-welcome-description">
+                    Chào mừng bạn đến với Coffee Shop, nơi truyền thống gặp gỡ sự đổi mới. Thưởng thức thực đơn đa dạng
+                    của
+                    chúng tôi bao gồm mọi thứ từ cà phê đậm đặc của Việt Nam đến các loại trà trái cây tươi mát. Cho dù
+                    bạn đến
+                    đây để đón khách nhanh hay để trò chuyện nhàn nhã, bầu không khí chào đón và đội ngũ tận tâm của
+                    chúng tôi
+                    đều có mặt để đảm bảo trải nghiệm đặc biệt. Hãy đến với chúng tôi và thưởng thức những hương vị
+                    tuyệt vời
+                    nhất được chế tác bằng niềm đam mê và độ chính xác. </p>
+            </div>
+            <div class="col-lg-3 col-md-3 col-sm-4 tm-welcome-img-container">
+                <div class="inline-block shadow-img">
+                    <img src="img/1.jpg" alt="Image" class="img-circle img-thumbnail">
+                </div>
+            </div>
+        </section>
+        <section class="tm-section tm-section-margin-bottom-0 row">
+            <div class="col-lg-12 tm-section-header-container">
+                <h2 class="tm-section-header gold-text tm-handwriting-font"><img src="img/logo.png" alt="Logo"
+                                                                                 class="tm-site-logo"> Các sản phẩm mới
+                </h2>
+                <div class="tm-hr-container">
+                    <hr class="tm-hr">
+                </div>
+            </div>
+            <div class="col-lg-12 tm-popular-items-container">
+                <th:block th:each="product : ${products}">
+                    <div class="tm-popular-item">
+<!--                        <img th:src="${product.image}" alt="Product Image"-->
+<!--                                style="width: 98%" />-->
+                        <img th:src="'data:image/jpeg;base64,' + ${product.image}" alt="Product Image" style="width: 98%"/>
+                        <div class="tm-popular-item-description">
+                            <h3 class="tm-handwriting-font tm-popular-item-title" style="height: 130px">
+                                <span class="tm-handwriting-font bigger-first-letter"
+                                      th:text="${#strings.substring(product.pname, 0, 1)}"></span>
+                                <span th:text="${product.pname}"></span>
+                            </h3>
+                            <hr class="tm-popular-item-hr">
+                            <div style="width: 200px; height: 200px">
+                                <p class="description" th:text="${product.description}"></p>
+                            </div>
+
+                            <div th:if="${user != null}">
+                                <form th:action="@{/cart/add}" method="post">
+                                    <input type="hidden" name="productId" th:value="${product.pid}"/>
+                                    <input type="hidden" name="customerId" th:value="${user.getUid()}"/>
+                                    <input type="hidden" name="quantity" value="1"/>
+                                    <button class="shipping-now-button" style="margin-top: 5%; background-color: #E57905; color:white; border: none; border-radius: 10px" type="submit">
+                                        <i class="bi-cart-fill me-1"></i>
+                                        <span style="padding: 7px">Thêm vào giỏ</span>
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </th:block>
+            </div>
+        </section>
+        <section class="tm-section">
+            <div class="row">
+                <div class="col-lg-12 tm-section-header-container">
+                    <h2 class="tm-section-header gold-text tm-handwriting-font"><img src="img/logo.png" alt="Logo"
+                                                                                     class="tm-site-logo"> Menu chính
+                    </h2>
+                    <div class="tm-hr-container">
+                        <hr class="tm-hr">
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="tm-daily-menu-container margin-top-60">
+                    <div class="col-lg-4 col-md-4">
+                        <img src="img/menu-board.png" alt="Menu board" class="tm-daily-menu-img">
+                    </div>
+                    <div class="col-lg-8 col-md-8">
+                        <p>
+                            Tại Coffee Shop, chúng tôi tin tưởng vào việc cung cấp nhiều hương vị đa dạng để đáp ứng mọi
+                            khẩu vị. Từ
+                            hương vị đậm đà và đậm đà của cà phê truyền thống Việt Nam đến các loại trà trái cây tươi
+                            mát và sáng
+                            tạo, thực đơn của chúng tôi được thiết kế để làm hài lòng quý khách. </p>
+                        <ol class="margin-top-30">
+                            <th:block th:each="item : ${categories}">
+                                <li th:text="${item.getCategoryName()}+': '+${item.getDescribe()}"></li>
+                            </th:block>
+                        </ol>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+</div>
+<footer>
+        <div class="tm-black-bg">
+        <div class="container">
+            <div class="row margin-bottom-60">
+                <nav class="col-lg-3 col-md-3 tm-footer-nav tm-footer-div">
+                    <h3 class="tm-footer-div-title">MENU CHÍNH</h3>
+                    <ul>
+                        <li><a href="/homepage">Trang chủ</a></li>
+                        <li><a href="/menu">Menu</a></li>
+<!--                        <li><a href="#">Liên hệ</a></li>-->
+                    </ul>
+                </nav>
+                <div class="col-lg-5 col-md-5 tm-footer-div">
+                    <h3 class="tm-footer-div-title">CHÚNG TÔI</h3>
+                    <p class="margin-top-15">The Coffee Shop sẽ là nơi mọi người xích lại gần nhau, đề cao giá trị kết
+                        nối con người và sẻ chia thân tình bên những tách cà phê, ly trà đượm hương, truyền cảm hứng về
+                        lối sống hiện đại.</p>
+                </div>
+                <div class="col-lg-4 col-md-4 tm-footer-div">
+                    <h3 class="tm-footer-div-title">BẠN CẦN</h3>
+                    <p><i class="bi bi-telephone"></i> Đặt hàng: 1800 6936</p>
+                    <p><i class="bi bi-envelope"></i> Liên hệ</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div>
+        <div class="container">
+            <div class="row tm-copyright">
+                <p class="col-lg-12 small copyright-text text-center">Bản quyền &copy; 2024 Coffee Shop</p>
+            </div>
+        </div>
+    </div>
+</footer> <!-- Footer content-->
+<!-- JS -->
+</body>
+
+</html>
