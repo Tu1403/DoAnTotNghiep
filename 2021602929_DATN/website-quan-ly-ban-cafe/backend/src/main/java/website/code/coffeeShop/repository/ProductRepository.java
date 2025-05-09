@@ -15,7 +15,7 @@ public interface ProductRepository extends JpaRepository<Product, Integer> {
     Iterable<Product> findByCategoryId(int cid);
 
     Page<Product> findByCategoryId(int cid, Pageable pageable);
-
+// search
     @Query(value = "SELECT * FROM Product ORDER BY pid DESC LIMIT 3;", nativeQuery = true)
     List<Product> getTop3Products();
 

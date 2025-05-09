@@ -82,7 +82,7 @@ public class CategoryController {
             categoryService.deleteById(cid);
             redirectAttributes.addFlashAttribute("message", "Xóa danh mục thành công!");
         } catch (DataIntegrityViolationException e) {
-            // Xử lý ngoại lệ nếu danh mục còn đang được sử dụng trong bill
+            // Xử lý ngoại lệ nếu danh mục còn đang được sử dụng trong billl
             redirectAttributes.addFlashAttribute("error", "Sản phẩm còn đang được sử dụng trong bill !");
         }
         return "redirect:/categories";

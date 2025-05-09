@@ -52,7 +52,7 @@ public class ForgotPasswordController {
         String resetPasswordLink = "http://localhost:8080/reset-password?token=" + token;
         sendEmail(user.getEmail(), resetPasswordLink);
 
-        redirectAttributes.addFlashAttribute("message", "Chúng tôi đã gửi một link thiết lập lại mật khẩu đến email của bạn.");
+        redirectAttributes.addFlashAttribute("message", "Chúng tôi đã gửi một link thiết lập lại mật khẩu đến email của bạn");
         return "redirect:/forgot-password";
     }
 

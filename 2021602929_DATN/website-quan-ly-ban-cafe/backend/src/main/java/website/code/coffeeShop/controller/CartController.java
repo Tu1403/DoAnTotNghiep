@@ -142,7 +142,7 @@ public class CartController {
                 Product product = item.getProduct();
                 int newQuantity = product.getQuantity() - item.getCartItem().getQuantity();
                 if (newQuantity < 0) {
-                    throw new IllegalArgumentException("Số lượng sản phẩm không đủ trong kho!");
+                    throw new IllegalArgumentException("Số lượng sản phẩm không đủ ở trong kho!");
                 }
                 product.setQuantity(newQuantity);
                 productService.updateProduct(product);

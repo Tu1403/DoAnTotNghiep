@@ -32,7 +32,7 @@ public class RegisterController {
         boolean hasErrors = false;
 
         if (user.getUsername() == null || user.getPass() == null || user.getEmail() == null) {
-            model.addAttribute("generalError", "Tài khoản và mật khẩu không được để trống !");
+            model.addAttribute("generalError", "Tài khoản và mật khẩu bạn không được để trống !");
             hasErrors = true;
         }
 
