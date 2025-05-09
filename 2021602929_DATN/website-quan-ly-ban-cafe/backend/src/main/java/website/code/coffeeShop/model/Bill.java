@@ -26,7 +26,7 @@ public class Bill {
     private int numberOfGuest;
     @Column(name = "total_cost")
     private float totalCost;
-    @Column(name= "table_id")
+    @Column(name= "table_id")   
     private int tableId;
     @Column(name = "user_id")
     private int userId;

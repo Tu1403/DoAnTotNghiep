@@ -23,7 +23,7 @@ public interface BillRepository extends JpaRepository<Bill, Integer> {
     List<Object[]> findMonthlyRevenue(); //Tra ve 1 mang doi tuong, gom month va totalCost
 
     @Query("SELECT MONTH(b.createdTime) AS month, COUNT(b.billId) AS totalOrders "
-            + "FROM Bill b WHERE b.type = 0 GROUP BY MONTH(b.createdTime)") //COUNT(b.BillId) la tinh tong so lan xuat hien cua billId LA PRIMARY KEY
+            + "FROM Bill b WHERE b.type = 0 GROUP BY MONTH(b.createdTime)") //COUNT(b.BillId) la tính tong so lan xuat hien cua billId LA PRIMARY KEY
     List<Object[]> findMonthlyOnlineOrders();
 
     @Query("SELECT MONTH(b.createdTime) AS month, COUNT(b.billId) AS totalOrders "
