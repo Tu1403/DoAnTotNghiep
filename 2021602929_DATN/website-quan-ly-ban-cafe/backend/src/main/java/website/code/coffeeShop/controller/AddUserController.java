@@ -31,7 +31,6 @@ public class AddUserController {
         user.setAvatar("abc");
 
         boolean hasErrors = false;
-
         if (user.getUsername() == null || user.getPass() == null || user.getEmail() == null) {
             model.addAttribute("generalError", "Username, password, and email cannot be null");
             hasErrors = true;
